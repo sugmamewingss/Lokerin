@@ -56,6 +56,10 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
+## Paket Windows (.exe)
+
+Untuk membagikan Lokerin tanpa instalasi, rakit `Lokerin.exe` dengan `tools\paket-exe\buat-exe.bat`. Petunjuk lengkap ada di [tools/paket-exe/README.md](tools/paket-exe/README.md).
+
 ## Akun demo
 
 Semua kata sandi: `password`. Semua nama orang dan usaha adalah **fiktif**.
