@@ -141,4 +141,4 @@ Jangan pernah commit file `.env`, folder `vendor/`, atau `node_modules/` (sudah 
 2. Login `usaha1@lokerin.test` → pasang lowongan Admin dan Kasir *(menunggu fitur F-04)*.
 3. Login `rizky@lokerin.test` → Rekomendasi: Teknisi Jaringan (85%) di atas Admin dan Kasir (82%) → buka detail → lihat saran pelatihan → Lamar.
 4. Login sebagai usaha → ubah status Rizky ke wawancara lalu diterima *(menunggu fitur F-09)*.
-5. Login kader/Disnaker → angka penempatan bertambah.
+5. Login kader/DisNaKer → angka penempatan bertambah.
