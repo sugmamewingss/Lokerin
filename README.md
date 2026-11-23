@@ -66,7 +66,7 @@ Semua kata sandi: `password`. Semua nama orang dan usaha adalah **fiktif**.
 | Kader desa | kader.mangliawan@lokerin.test | Juga: kader.saptorenggo, kader.sekarpuro, kader.pakiskembar, kader.pucangsongo |
 | Disnaker | disnaker@lokerin.test | Dasbor kecamatan |
 
-Login bisa pakai email atau nomor HP.
+Login bisa menggunakan email atau nomor HP.
 
 Data 15 desa (luas, penduduk 2025, jarak ke ibu kota kecamatan) diambil dari BPS Kabupaten Malang, *Kecamatan Pakis Dalam Angka 2026*.
 
