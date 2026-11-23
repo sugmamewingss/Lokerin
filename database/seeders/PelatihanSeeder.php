@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Desa;
 use App\Models\Keahlian;
 use App\Models\Pelatihan;
 use Illuminate\Database\Seeder;
@@ -12,18 +13,20 @@ class PelatihanSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['Kasir', 'Pelatihan Kasir dan Aplikasi POS', 'LPK Contoh Pakis', 'Sabtu, 2 minggu', 'Balai Desa Pakiskembar'],
-            ['Konfigurasi router', 'Dasar Jaringan dan Konfigurasi Router', 'SMK Mitra (contoh)', 'Minggu, 4 pertemuan', 'Lab SMK Mitra'],
-            ['Pelayanan pelanggan', 'Pelayanan Prima untuk Usaha Wisata', 'Disparbud (contoh)', 'Bulan depan, 3 hari', 'Kawasan Wendit'],
-            ['Pemasaran media sosial', 'Jualan Online untuk UMKM', 'Diskominfo (contoh)', 'Daring, 2 sesi', 'Zoom'],
-            ['Membuat kopi', 'Barista Dasar', 'LPK Contoh Pakis', 'Sabtu-Minggu', 'Pakisjajar'],
-            ['Microsoft Excel', 'Excel untuk Administrasi', 'Karang Taruna (contoh)', 'Malam hari, 4 sesi', 'Balai Desa Sekarpuro'],
+            ['Kasir', 'Pelatihan Kasir dan Aplikasi POS', 'lpk', 'LPK Contoh Pakis', 'Sabtu, 2 minggu', 'Balai Desa Pakiskembar', 'Pakiskembar'],
+            ['Konfigurasi router', 'Dasar Jaringan dan Konfigurasi Router', 'smk', 'SMK Mitra (contoh)', 'Minggu, 4 pertemuan', 'Lab SMK Mitra', null],
+            ['Pelayanan pelanggan', 'Pelayanan Prima untuk Usaha Wisata', 'lainnya', 'Disparbud (contoh)', 'Bulan depan, 3 hari', 'Kawasan Wendit', 'Mangliawan'],
+            ['Pemasaran media sosial', 'Jualan Online untuk UMKM', 'lainnya', 'Diskominfo (contoh)', 'Daring, 2 sesi', 'Zoom', null],
+            ['Membuat kopi', 'Barista Dasar', 'lpk', 'LPK Contoh Pakis', 'Sabtu-Minggu', 'Pakisjajar', 'Pakisjajar'],
+            ['Microsoft Excel', 'Excel untuk Administrasi', 'blk', 'BLK Mitra (contoh)', 'Malam hari, 4 sesi', 'Balai Desa Sekarpuro', 'Sekarpuro'],
         ];
 
-        foreach ($data as [$keahlian, $judul, $penyelenggara, $jadwal, $lokasi]) {
-            Pelatihan::updateOrCreate(['judul' => $judul], [
+        $desa = Desa::where('kecamatan', 'Pakis')->pluck('id', 'nama');
+        foreach ($data as [$keahlian, $judul, $jenis, $penyelenggara, $jadwal, $lokasi, $namaDesa]) {
+            Pelatihan::withTrashed()->updateOrCreate(['judul' => $judul], [
                 'keahlian_id' => Keahlian::where('nama', $keahlian)->value('id'),
-                'penyelenggara' => $penyelenggara, 'jadwal' => $jadwal, 'lokasi' => $lokasi, 'kuota' => 20,
+                'jenis_penyelenggara' => $jenis, 'penyelenggara' => $penyelenggara, 'jadwal' => $jadwal, 'lokasi' => $lokasi,
+                'desa_id' => $desa[$namaDesa] ?? null, 'kuota' => 20,
             ]);
         }
     }

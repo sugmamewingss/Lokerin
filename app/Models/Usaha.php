@@ -13,10 +13,10 @@ class Usaha extends Model
 
     protected $fillable = [
         'user_id', 'nama_usaha', 'jenis_usaha', 'desa_id', 'alamat',
-        'status_verifikasi', 'diverifikasi_oleh', 'diverifikasi_at',
+        'status_verifikasi', 'diverifikasi_oleh', 'diverifikasi_at', 'is_umkm',
     ];
 
-    protected $casts = ['diverifikasi_at' => 'datetime'];
+    protected $casts = ['diverifikasi_at' => 'datetime', 'is_umkm' => 'boolean'];
 
     public function user(): BelongsTo
     {
@@ -36,5 +36,12 @@ class Usaha extends Model
     public function scopeTerverifikasi(Builder $q): Builder
     {
         return $q->where('status_verifikasi', 'terverifikasi');
+    }
+
+    public function versiVerifikasi(): string
+    {
+        return hash('sha256', serialize($this->only([
+            'id', 'nama_usaha', 'jenis_usaha', 'desa_id', 'alamat', 'status_verifikasi', 'is_umkm',
+        ])));
     }
 }

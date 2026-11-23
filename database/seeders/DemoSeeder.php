@@ -132,7 +132,7 @@ class DemoSeeder extends Seeder
             ]);
             $u = Usaha::updateOrCreate(['nama_usaha' => $nama], [
                 'user_id' => $pemilik->id, 'jenis_usaha' => $jenis, 'desa_id' => $this->desa[$desa],
-                'alamat' => "Desa $desa", 'status_verifikasi' => $status,
+                'alamat' => "Desa $desa", 'status_verifikasi' => $status, 'is_umkm' => true,
                 'diverifikasi_at' => $status === 'terverifikasi' ? now() : null,
             ]);
 
@@ -143,6 +143,8 @@ class DemoSeeder extends Seeder
                     'kuota' => fake()->numberBetween(1, 3), 'gaji_min' => $gaji, 'status' => 'aktif',
                     'tanggal_tutup' => now()->addMonth(),
                 ]);
+                $l->catatPenerbitanPertama();
+                $l->save();
                 $l->keahlian()->sync(collect($wajib)->mapWithKeys(fn ($k) => [$this->keahlian[$k] => ['wajib' => true]])->all());
             }
         }
@@ -156,14 +158,21 @@ class DemoSeeder extends Seeder
 
         foreach ($profil as $p) {
             $rek = $matching->rekomendasi($p)->take(2);
-            foreach ($rek as $idx => $r) {
+            foreach ($rek as $r) {
+                $lowongan = $r['lowongan'];
                 $status = fake()->randomElement(['dikirim', 'dilihat', 'wawancara', 'diterima', 'ditolak']);
-                $lamaran = Lamaran::updateOrCreate(
-                    ['lowongan_id' => $r['lowongan']->id, 'profil_id' => $p->id],
+                // Pertahankan satu slot pada dua lowongan contoh agar alur Rizky bisa didemokan.
+                if ($status === 'diterima' && in_array($lowongan->judul, ['Teknisi Jaringan', 'Admin dan Kasir'], true)
+                    && $lowongan->penempatan()->count() >= $lowongan->kuota - 1) {
+                    $status = 'wawancara';
+                }
+
+                $lamaran = Lamaran::firstOrCreate(
+                    ['lowongan_id' => $lowongan->id, 'profil_id' => $p->id],
                     ['skor_cocok' => $r['hasil']['skor'], 'status' => $status, 'dikirim_at' => now()->subDays(fake()->numberBetween(0, 20))]
                 );
-                if ($status === 'diterima') {
-                    Penempatan::updateOrCreate(['lamaran_id' => $lamaran->id], [
+                if ($lamaran->status === 'diterima') {
+                    Penempatan::firstOrCreate(['lamaran_id' => $lamaran->id], [
                         'tanggal_mulai' => now()->subDays(fake()->numberBetween(0, 10)), 'jenis_kontrak' => 'kontrak',
                     ]);
                 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,5 +43,10 @@ class ProfilPencari extends Model
     public function isAktif(): bool
     {
         return $this->persetujuan_data_at !== null;
+    }
+
+    public function scopeDisetujui(Builder $query): Builder
+    {
+        return $query->whereNotNull('persetujuan_data_at');
     }
 }

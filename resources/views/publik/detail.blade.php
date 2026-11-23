@@ -8,28 +8,53 @@
         </div>
         @if ($hasil)<span class="px-3 py-1 rounded-lg bg-blue-600 text-white font-semibold">{{ $hasil['skor'] }}% cocok</span>@endif
     </div>
+    @if ($hasil)
+        @include('partials.ringkasan-kecocokan', ['lowongan' => $lowongan, 'hasil' => $hasil])
+    @endif
     <p class="mt-4 whitespace-pre-line">{{ $lowongan->deskripsi }}</p>
     <dl class="mt-4 grid grid-cols-2 gap-2 text-sm">
         <dt class="text-slate-500">Pendidikan minimal</dt><dd>{{ $lowongan->pendidikan_min }}</dd>
         <dt class="text-slate-500">Jurusan</dt><dd>{{ $lowongan->jurusan_target ?? 'Semua jurusan' }}</dd>
-        <dt class="text-slate-500">Jenis kerja</dt><dd>{{ str_replace('_', ' ', $lowongan->jenis_kerja) }}</dd>
+        <dt class="text-slate-500">Jenis kerja</dt><dd>{{ \App\Models\Lowongan::JENIS_KERJA[$lowongan->jenis_kerja] }}</dd>
         <dt class="text-slate-500">Kuota</dt><dd>{{ $lowongan->kuota }} orang</dd>
+        @if ($gaji = $lowongan->rentangGaji())
+            <dt class="text-slate-500">Gaji</dt><dd>{{ $gaji }}</dd>
+        @endif
+        @if ($lowongan->tanggal_tutup)
+            <dt class="text-slate-500">Batas melamar</dt><dd>{{ $lowongan->tanggal_tutup->format('d/m/Y') }}</dd>
+        @endif
     </dl>
+    @include('partials.informasi-banjir', ['desaLokasi' => $lowongan->usaha->desa])
     <h2 class="mt-5 font-semibold">Keahlian yang dibutuhkan</h2>
-    <ul class="mt-2 space-y-1 text-sm">
-        @foreach ($lowongan->keahlian as $k)
-            @php $kurang = $hasil && in_array($k->id, $hasil['keahlian_kurang']); @endphp
-            <li>{!! $hasil ? ($kurang ? '<span class="text-red-600">✗</span>' : '<span class="text-green-600">✓</span>') : '•' !!}
-                {{ $k->nama }} @unless($k->pivot->wajib)<span class="text-slate-400">(nilai tambah)</span>@endunless</li>
-        @endforeach
-    </ul>
+    @if ($lowongan->keahlian->isEmpty())
+        <p class="mt-2 text-sm text-slate-600">Belum ada keahlian yang dicantumkan.</p>
+    @else
+        <ul class="mt-2 list-inside list-disc space-y-1 text-sm">
+            @foreach ($lowongan->keahlian as $k)
+                <li>
+                    {{ $k->nama }}
+                    @if (!$k->pivot->wajib)
+                        <span class="text-slate-600">(tambahan)</span>
+                    @elseif ($hasil && in_array($k->id, $hasil['keahlian_kurang'], true))
+                        <span class="text-red-700">(wajib, belum dimiliki)</span>
+                    @elseif ($hasil)
+                        <span class="text-green-700">(wajib, terpenuhi)</span>
+                    @else
+                        <span class="text-slate-600">(wajib)</span>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    @endif
     @if ($pelatihan->isNotEmpty())
-        <div class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm">
-            <p class="font-semibold">Saran pelatihan untuk keahlian yang belum kamu miliki</p>
+        <section id="pelatihan-terkait" class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm">
+            <h2 class="font-semibold">{{ $hasil ? 'Saran pelatihan untuk keahlian yang belum kamu miliki' : 'Pelatihan untuk keahlian wajib lowongan ini' }}</h2>
             <ul class="mt-1 list-disc pl-5">
-                @foreach ($pelatihan as $p)<li>{{ $p->judul }} ({{ $p->penyelenggara }}, {{ $p->jadwal }})</li>@endforeach
+                @foreach ($pelatihan as $p)
+                    <li><a href="{{ route('pelatihan.show', $p) }}" class="font-medium text-blue-700 underline">{{ $p->judul }}</a> · {{ $p->keahlian->nama }}</li>
+                @endforeach
             </ul>
-        </div>
+        </section>
     @endif
     <div class="mt-5">
         @if ($profil && $profil->isAktif())

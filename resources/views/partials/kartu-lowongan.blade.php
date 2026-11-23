@@ -10,17 +10,13 @@
         @endisset
     </div>
     <div class="mt-2 flex flex-wrap gap-2 text-xs text-slate-600">
-        <span class="px-2 py-0.5 rounded bg-slate-100">{{ str_replace('_', ' ', $l->jenis_kerja) }}</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100">{{ \App\Models\Lowongan::JENIS_KERJA[$l->jenis_kerja] }}</span>
         <span class="px-2 py-0.5 rounded bg-slate-100">min. {{ $l->pendidikan_min }}</span>
-        @if ($l->gaji_min)
-            <span class="px-2 py-0.5 rounded bg-slate-100">Rp{{ number_format($l->gaji_min, 0, ',', '.') }}@if($l->gaji_max) - {{ number_format($l->gaji_max, 0, ',', '.') }}@endif</span>
+        @if ($gaji = $l->rentangGaji())
+            <span class="px-2 py-0.5 rounded bg-slate-100">{{ $gaji }}</span>
         @endif
     </div>
     @isset($hasil)
-        <p class="mt-2 text-xs text-slate-500">
-            {{ $hasil['J'] == 1 ? 'Jurusan sesuai' : ($hasil['J'] > 0 ? 'Jurusan serumpun' : 'Jurusan berbeda') }} ·
-            {{ $hasil['D'] == 1 ? 'di desamu' : ($hasil['D'] >= 0.6 ? 'masih di Pakis' : 'di luar Pakis') }} ·
-            keahlian {{ (int) round($hasil['K'] * 100) }}% terpenuhi
-        </p>
+        @include('partials.ringkasan-kecocokan', ['lowongan' => $l, 'hasil' => $hasil])
     @endisset
 </a>
