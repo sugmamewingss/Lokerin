@@ -1,7 +1,7 @@
 @extends('layouts.app', ['judul' => 'Lamaran saya'])
 @section('konten')
-<h1 class="text-xl font-bold mb-4">Lamaran saya</h1>
-<div class="bg-white rounded-xl border border-slate-200 divide-y">
+<h1 class="judul-halaman mb-4">Lamaran saya</h1>
+<div class="card divide-y">
     @forelse ($lamaran as $lm)
         <article class="p-4">
             <div class="flex flex-wrap items-start justify-between gap-3">
@@ -17,7 +17,7 @@
             @if ($lm->bolehPindahKe('dibatalkan'))
                 <form method="POST" action="{{ route('pencari.lamaran.batal', $lm) }}" class="mt-3">
                     @csrf @method('PATCH')
-                    <button class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-red-700">Batalkan lamaran</button>
+                    <button class="btn btn-secondary px-3 py-2 font-medium text-red-700">Batalkan lamaran</button>
                 </form>
             @endif
         </article>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Desa;
 use App\Models\Lowongan;
 use App\Models\User;
+use App\Models\Usaha;
 use App\Services\MatchingService;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,11 @@ class PublikController extends Controller
         return view('publik.beranda', [
             'jumlahLowongan' => Lowongan::tampil()->count(),
             'terbaru' => Lowongan::tampil()->with('usaha.desa')->latest()->take(6)->get(),
+            'jumlahUsaha' => Usaha::terverifikasi()->count(),
+            'jumlahDesa' => Desa::where('kecamatan', 'Pakis')->count(),
+            'desaTeramai' => Desa::where('kecamatan', 'Pakis')
+                ->withCount(['lowongan' => fn ($q) => $q->whereIn('lowongan.id', Lowongan::tampil()->select('lowongan.id'))])
+                ->orderByDesc('lowongan_count')->orderBy('nama')->take(6)->get(),
         ]);
     }
 

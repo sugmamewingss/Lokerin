@@ -1,20 +1,24 @@
 @extends('layouts.app', ['judul' => 'Usaha saya'])
 @section('konten')
-<div class="flex flex-wrap items-start justify-between gap-3">
+<div class="card flex flex-wrap items-center justify-between gap-4 p-6">
+    <div class="flex items-center gap-4">
+    <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-amber-100 text-amber-700"><x-ikon nama="toko" class="h-7 w-7" /></span>
     <div>
-        <h1 class="text-xl font-bold">{{ $usaha?->nama_usaha ?? 'Usaha saya' }}</h1>
+        <p class="eyebrow">Usaha saya</p>
+        <h1 class="judul-halaman mt-1">{{ $usaha?->nama_usaha ?? 'Usaha saya' }}</h1>
         @if ($usaha)
             <p class="text-sm text-slate-600">{{ $usaha->desa->nama }} · {{ ucfirst($usaha->status_verifikasi) }}@if ($usaha->status_verifikasi === 'menunggu') verifikasi @endif</p>
         @else
             <p class="text-sm text-slate-600">Lengkapi profil agar kader desa bisa memverifikasi usahamu.</p>
         @endif
     </div>
-    <a href="{{ route('usaha.profil') }}" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">{{ $usaha ? 'Ubah profil' : 'Lengkapi profil' }}</a>
+    </div>
+    <a href="{{ route('usaha.profil') }}" class="btn btn-secondary">{{ $usaha ? 'Ubah profil' : 'Lengkapi profil' }}</a>
 </div>
 
 @if ($usaha)
     @if ($usaha->status_verifikasi !== 'terverifikasi')
-        <p class="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
             @if ($usaha->status_verifikasi === 'ditolak')
                 Profil usaha ditolak. Perbarui data untuk mengajukan verifikasi ulang.
             @else
@@ -23,11 +27,11 @@
         </p>
     @endif
 
-    <div class="mt-6 mb-2 flex items-center justify-between gap-3">
-        <h2 class="font-semibold">Lowongan</h2>
-        <a href="{{ route('usaha.lowongan.create') }}" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Buat lowongan</a>
+    <div class="mb-3 mt-8 flex items-center justify-between gap-3">
+        <h2 class="text-xl font-extrabold">Lowongan</h2>
+        <a href="{{ route('usaha.lowongan.create') }}" class="btn btn-primary">Buat lowongan</a>
     </div>
-    <div class="bg-white rounded-xl border divide-y">
+    <div class="card divide-y">
         @forelse ($usaha->lowongan as $l)
             <div class="p-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
@@ -47,9 +51,9 @@
                 </div>
                 <div class="flex flex-wrap gap-2">
                     @if ($usaha->status_verifikasi === 'terverifikasi')
-                        <a href="{{ route('usaha.pelamar.index', $l) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-blue-700" aria-label="Pelamar untuk {{ $l->judul }}">Pelamar</a>
+                        <a href="{{ route('usaha.pelamar.index', $l) }}" class="btn btn-secondary px-3 py-2" aria-label="Pelamar untuk {{ $l->judul }}">Pelamar</a>
                     @endif
-                    <a href="{{ route('usaha.lowongan.edit', $l) }}" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" aria-label="Kelola {{ $l->judul }}">Kelola</a>
+                    <a href="{{ route('usaha.lowongan.edit', $l) }}" class="btn btn-secondary px-3 py-2" aria-label="Kelola {{ $l->judul }}">Kelola</a>
                 </div>
             </div>
         @empty

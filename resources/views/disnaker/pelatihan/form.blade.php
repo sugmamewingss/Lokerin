@@ -8,7 +8,7 @@
         @method('PUT')
     @endif
 
-    <h1 class="text-xl font-bold">{{ $judulHalaman }}</h1>
+    <h1 class="judul-halaman">{{ $judulHalaman }}</h1>
     <label class="block text-sm font-medium">Nama pelatihan
         <input name="judul" value="{{ old('judul', $pelatihan->judul) }}" required maxlength="150" class="mt-1 w-full rounded-lg border-slate-300">
     </label>
@@ -17,7 +17,7 @@
             <input name="penyelenggara" value="{{ old('penyelenggara', $pelatihan->penyelenggara) }}" required maxlength="150" class="mt-1 w-full rounded-lg border-slate-300">
         </label>
         <label>Jenis penyelenggara
-            <select name="jenis_penyelenggara" required class="mt-1 w-full rounded-lg border-slate-300">
+            <select name="jenis_penyelenggara" required class="mt-1 w-full">
                 <option value="">Pilih jenis</option>
                 @foreach (\App\Models\Pelatihan::JENIS_PENYELENGGARA as $jenis => $label)
                     <option value="{{ $jenis }}" @selected(old('jenis_penyelenggara', $pelatihan->jenis_penyelenggara) === $jenis)>{{ $label }}</option>
@@ -26,14 +26,14 @@
         </label>
         <div>
             <label>Keahlian yang dipelajari
-                <select name="keahlian_id" required class="mt-1 w-full rounded-lg border-slate-300">
+                <select name="keahlian_id" required class="mt-1 w-full">
                     <option value="">Pilih keahlian</option>
                     @foreach ($keahlian as $item)
                         <option value="{{ $item->id }}" @selected(old('keahlian_id', $pelatihan->keahlian_id) == $item->id)>{{ $item->nama }}</option>
                     @endforeach
                 </select>
             </label>
-            <a href="{{ route('disnaker.keahlian.index') }}" class="mt-1 inline-block font-medium text-blue-700 underline">Kelola daftar keahlian</a>
+            <a href="{{ route('disnaker.keahlian.index') }}" class="mt-1 inline-block link">Kelola daftar keahlian</a>
         </div>
         <label>Jadwal (opsional)
             <input name="jadwal" value="{{ old('jadwal', $pelatihan->jadwal) }}" maxlength="100" class="mt-1 w-full rounded-lg border-slate-300">
@@ -42,7 +42,7 @@
             <input name="lokasi" value="{{ old('lokasi', $pelatihan->lokasi) }}" maxlength="150" class="mt-1 w-full rounded-lg border-slate-300">
         </label>
         <label>Desa lokasi pelatihan (opsional)
-            <select name="desa_id" aria-describedby="petunjuk-desa" class="mt-1 w-full rounded-lg border-slate-300">
+            <select name="desa_id" aria-describedby="petunjuk-desa" class="mt-1 w-full">
                 <option value="">Desa belum dicantumkan</option>
                 @foreach ($desa as $item)
                     <option value="{{ $item->id }}" @selected(old('desa_id', $pelatihan->desa_id) == $item->id)>{{ $item->nama }} · {{ $item->kecamatan }}</option>
@@ -55,8 +55,8 @@
         </label>
     </div>
     <div class="flex flex-wrap items-center gap-3 text-sm font-semibold">
-        <button class="rounded-lg bg-blue-600 px-4 py-2 text-white">{{ $pelatihan->exists ? 'Simpan perubahan' : 'Publikasikan pelatihan' }}</button>
-        <a href="{{ route('disnaker.pelatihan.index') }}" class="text-blue-700 underline">Kembali ke pengelolaan</a>
+        <button class="btn btn-primary">{{ $pelatihan->exists ? 'Simpan perubahan' : 'Publikasikan pelatihan' }}</button>
+        <a href="{{ route('disnaker.pelatihan.index') }}" class="link">Kembali ke pengelolaan</a>
     </div>
 </form>
 @endsection

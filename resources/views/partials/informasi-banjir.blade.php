@@ -9,7 +9,7 @@
     @else
         <div class="space-y-1">
             <p>Banjir tercantum sebagai ancaman di Desa {{ $desaLokasi->nama }}, Kecamatan {{ $desaLokasi->kecamatan }}.</p>
-            <p class="text-slate-600"><a href="{{ $banjir['acuan']['url'] }}" class="text-blue-700 underline">{{ $banjir['acuan']['sumber'] }}</a></p>
+            <p class="text-slate-600"><a href="{{ $banjir['acuan']['url'] }}" class="link">{{ $banjir['acuan']['sumber'] }}</a></p>
         </div>
         @if ($banjir['kejadian'])
             <div>
@@ -19,7 +19,7 @@
                         <li>
                             <time datetime="{{ $kejadian['tanggal'] }}" class="font-medium">{{ \Carbon\CarbonImmutable::parse($kejadian['tanggal'])->format('d/m/Y') }}</time>
                             · {{ $kejadian['uraian'] }}
-                            <a href="{{ $kejadian['url'] }}" class="text-blue-700 underline">{{ $kejadian['sumber'] }}</a>
+                            <a href="{{ $kejadian['url'] }}" class="link">{{ $kejadian['sumber'] }}</a>
                         </li>
                     @endforeach
                 </ul>
@@ -29,5 +29,5 @@
         @endif
         <p class="text-slate-600">Catatan ini mencakup tingkat desa. Kondisi lokasi kegiatan dan akses perjalanan dapat berbeda.</p>
     @endif
-    <p><a href="https://inarisk.bnpb.go.id/webgis/" class="font-medium text-blue-700 underline">Lihat peta InaRISK BNPB</a></p>
+    <p><a href="https://inarisk.bnpb.go.id/webgis/" class="link">Lihat peta InaRISK BNPB</a></p>
 </section>
