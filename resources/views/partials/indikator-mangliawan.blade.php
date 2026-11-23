@@ -1,7 +1,7 @@
 <section class="my-6 space-y-4" aria-labelledby="indikator-mangliawan">
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-            <h2 id="indikator-mangliawan" class="text-lg font-bold">Indikator uji coba Mangliawan</h2>
+            <h2 id="indikator-mangliawan" class="text-xl font-extrabold">Indikator uji coba Mangliawan</h2>
             @if ($ujiCoba['mulai'])
                 <p class="text-sm text-slate-600">Periode {{ $ujiCoba['mulai']->format('d/m/Y') }}–{{ $ujiCoba['sampai']->format('d/m/Y') }} WIB</p>
             @else
@@ -12,28 +12,31 @@
             <label class="block">Tanggal mulai uji coba
                 <input type="date" name="mulai" value="{{ $ujiCoba['mulai']?->toDateString() }}" max="{{ now('Asia/Jakarta')->toDateString() }}" required class="mt-1 block rounded-lg border-slate-300 bg-white">
             </label>
-            <button class="rounded-lg bg-blue-600 px-3 py-2 font-semibold text-white">Terapkan periode</button>
+            <button class="btn btn-primary">Terapkan periode</button>
             @if ($ujiCoba['mulai'])
-                <a href="{{ url()->current() }}" class="px-1 py-2 text-blue-700 underline">Semua catatan</a>
+                <a href="{{ url()->current() }}" class="px-1 py-2 text-brand-700 underline">Semua catatan</a>
             @endif
         </form>
     </div>
 
     <div class="grid gap-3 sm:grid-cols-3">
-        <article class="rounded-xl border border-slate-200 bg-white p-4">
+        <article class="stat">
             <h3 class="text-sm font-semibold">Pendaftar aktif</h3>
-            <p class="mt-2 text-2xl font-bold">{{ number_format($ujiCoba['pendaftar'], 0, ',', '.') }}</p>
+            <p class="stat-angka mt-2">{{ number_format($ujiCoba['pendaftar'], 0, ',', '.') }}</p>
+            <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600" style="width: {{ min(100, 100 * $ujiCoba['pendaftar'] / 250) }}%"></div></div>
             <p class="mt-1 text-sm text-slate-600">Target sekitar 250 warga atau 50% estimasi penganggur</p>
         </article>
-        <article class="rounded-xl border border-slate-200 bg-white p-4">
+        <article class="stat">
             <h3 class="text-sm font-semibold">UMKM pemasang lowongan</h3>
-            <p class="mt-2 text-2xl font-bold">{{ number_format($ujiCoba['umkm'], 0, ',', '.') }}</p>
+            <p class="stat-angka mt-2">{{ number_format($ujiCoba['umkm'], 0, ',', '.') }}</p>
+            <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600" style="width: {{ min(100, 100 * $ujiCoba['umkm'] / 30) }}%"></div></div>
             <p class="mt-1 text-sm text-slate-600">Target minimal 30 UMKM</p>
         </article>
-        <article class="rounded-xl border border-slate-200 bg-white p-4">
+        <article class="stat">
             <h3 class="text-sm font-semibold">Pendaftar yang ditempatkan</h3>
             @if ($ujiCoba['persen_penempatan'] !== null)
-                <p class="mt-2 text-2xl font-bold">{{ number_format($ujiCoba['persen_penempatan'], 1, ',', '.') }}%</p>
+                <p class="stat-angka mt-2">{{ number_format($ujiCoba['persen_penempatan'], 1, ',', '.') }}%</p>
+            <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600" style="width: {{ min(100, 100 * $ujiCoba['persen_penempatan'] / 30) }}%"></div></div>
                 <p class="text-sm text-slate-600">{{ $ujiCoba['warga_ditempatkan'] }} dari {{ $ujiCoba['pendaftar'] }} pendaftar</p>
             @else
                 <p class="mt-2 font-semibold">Belum ada pendaftar</p>
@@ -43,7 +46,7 @@
     </div>
     <p class="text-sm text-slate-600">Pendaftar dihitung dari tanggal persetujuan profil yang masih aktif. UMKM dihitung sekali jika terverifikasi dan memiliki lowongan dengan tanggal terbit tercatat. Tingkat penempatan menghitung warga unik dengan catatan penempatan dalam periode.</p>
 
-    <div class="rounded-xl border border-slate-200 bg-white p-4 text-sm">
+    <div class="card p-4 text-sm">
         <h3 class="mb-2 font-semibold">Indikator dari sumber eksternal</h3>
         <dl class="grid gap-3 sm:grid-cols-2">
             <div>

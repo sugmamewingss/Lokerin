@@ -7,8 +7,8 @@
         @method('PUT')
     @endif
 
-    @php $kelasInput = 'mt-1 w-full rounded-lg border-slate-300'; @endphp
-    <h1 class="text-xl font-bold">{{ $lowongan->exists ? 'Kelola lowongan' : 'Buat lowongan' }}</h1>
+    @php $kelasInput = 'mt-1 w-full'; @endphp
+    <h1 class="judul-halaman">{{ $lowongan->exists ? 'Kelola lowongan' : 'Buat lowongan' }}</h1>
 
     <label class="block text-sm font-medium">Judul lowongan
         <input name="judul" required maxlength="150" value="{{ old('judul', $lowongan->judul) }}" class="{{ $kelasInput }}">
@@ -73,7 +73,7 @@
                 <p class="mb-1 text-sm font-medium text-slate-700">{{ $kategori }}</p>
                 <div class="grid gap-2 sm:grid-cols-2">
                     @foreach ($daftar as $k)
-                        <label class="flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-2 py-1 text-sm">
+                        <label class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 px-2 py-1 text-sm">
                             <span>{{ $k->nama }}</span>
                             <select name="keahlian[{{ $k->id }}]" class="rounded-lg border-slate-300 text-sm">
                                 <option value="">Tidak dipilih</option>
@@ -87,8 +87,8 @@
         @endforeach
     </fieldset>
     <div class="flex flex-wrap items-center gap-4">
-        <button class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white">Simpan lowongan</button>
-        <a href="{{ route('usaha.beranda') }}" class="text-sm text-blue-700 underline">Kembali ke usaha saya</a>
+        <button class="btn btn-primary">Simpan lowongan</button>
+        <a href="{{ route('usaha.beranda') }}" class="text-sm link">Kembali ke usaha saya</a>
     </div>
 </form>
 @endsection

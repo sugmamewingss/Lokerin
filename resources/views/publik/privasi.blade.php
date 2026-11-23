@@ -1,9 +1,9 @@
 @extends('layouts.app', ['judul' => 'Kebijakan data'])
 
 @section('konten')
-<article class="max-w-3xl space-y-5 rounded-xl border border-slate-200 bg-white p-5 sm:p-7">
+<article class="card max-w-3xl space-y-5 p-5 sm:p-7">
     <header class="space-y-2">
-        <h1 class="text-2xl font-bold">Kebijakan data Lokerin</h1>
+        <h1 class="judul-halaman">Kebijakan data Lokerin</h1>
         <p class="text-sm text-slate-600">Lokerin menggunakan data akun untuk masuk ke aplikasi. Setelah kamu setuju, data profil pencari kerja dipakai untuk rekomendasi, proses lamaran, dan statistik tingkat desa.</p>
     </header>
 
@@ -30,7 +30,7 @@
         <p class="text-sm text-slate-600">Di halaman Profil, kamu bisa mengubah data dan menarik persetujuan. Setelah ditarik, rekomendasi dan pengiriman lamaran baru berhenti. Lamaranmu disembunyikan dari usaha dan dikeluarkan dari rekap, sementara riwayatnya tetap tersedia untukmu.</p>
         @auth
             @if (auth()->user()->hasRole(\App\Models\User::ROLE_PENCARI))
-                <a href="{{ route('pencari.profil') }}" class="inline-block text-sm font-medium text-blue-700 underline">Buka profil pencari kerja</a>
+                <a href="{{ route('pencari.profil') }}" class="inline-block text-sm link">Buka profil pencari kerja</a>
             @endif
         @endauth
     </section>

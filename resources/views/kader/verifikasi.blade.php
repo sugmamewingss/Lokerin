@@ -1,7 +1,7 @@
 @extends('layouts.app', ['judul' => 'Verifikasi usaha'])
 @section('konten')
-<h1 class="text-xl font-bold mb-4">Verifikasi usaha di desa</h1>
-<div class="bg-white rounded-xl border divide-y">
+<h1 class="judul-halaman mb-4">Verifikasi usaha di desa</h1>
+<div class="card divide-y">
     @forelse ($usaha as $u)
         <div class="p-4 flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -11,7 +11,7 @@
             </div>
             @if ($u->status_verifikasi === 'menunggu')
                 <div class="flex gap-2">
-                    @foreach (['terverifikasi' => 'bg-blue-600 text-white', 'ditolak' => 'border text-red-600'] as $s => $kelas)
+                    @foreach (['terverifikasi' => 'bg-brand-600 text-white', 'ditolak' => 'border text-red-600'] as $s => $kelas)
                         <form method="POST" action="{{ route('kader.verifikasi.update', $u) }}">@csrf
                             <input type="hidden" name="status" value="{{ $s }}">
                             <input type="hidden" name="versi_profil" value="{{ $u->versiVerifikasi() }}">

@@ -2,7 +2,7 @@
     $kolom = ['pencari' => 'Pencari kerja', 'lowongan' => 'Lowongan aktif', 'lamaran' => 'Lamaran', 'penempatan' => 'Penempatan'];
 @endphp
 
-<div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+<div class="card overflow-x-auto">
     <table class="w-full text-sm">
         <thead class="bg-slate-100">
             <tr>

@@ -1,9 +1,9 @@
 @extends('layouts.app', ['judul' => $pelatihan->judul])
 
 @section('konten')
-<a href="{{ route('pelatihan.index') }}" class="mb-3 inline-block text-sm font-medium text-blue-700 underline">Kembali ke katalog</a>
-<article class="rounded-xl border border-slate-200 bg-white p-5">
-    <h1 class="text-xl font-bold">{{ $pelatihan->judul }}</h1>
+<a href="{{ route('pelatihan.index') }}" class="mb-3 inline-block text-sm link">Kembali ke katalog</a>
+<article class="card p-5">
+    <h1 class="judul-halaman">{{ $pelatihan->judul }}</h1>
     <dl class="mt-4 grid gap-4 text-sm sm:grid-cols-2">
         <div>
             <dt class="text-slate-600">Penyelenggara</dt>

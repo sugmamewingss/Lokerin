@@ -1,4 +1,4 @@
-<dl class="mt-3 grid gap-3 rounded-lg bg-slate-50 p-3 text-sm sm:grid-cols-3">
+<dl class="mt-3 grid gap-3 rounded-xl bg-slate-50 p-3 text-sm sm:grid-cols-3">
     <div>
         <dt class="text-slate-600">Mulai kerja</dt>
         <dd class="font-medium">{{ $penempatan->tanggal_mulai?->format('d/m/Y') ?? 'Belum tercatat' }}</dd>
