@@ -69,7 +69,7 @@ Semua kata sandi: `password`. Semua nama orang dan usaha adalah **fiktif**.
 | Kader desa | kader.mangliawan@lokerin.test | Juga: kader.saptorenggo, kader.sekarpuro, kader.pakiskembar, kader.pucangsongo |
 | Disnaker | disnaker@lokerin.test | Dasbor kecamatan |
 
-Login bisa pakai email atau nomor HP.
+Login bisa menggunakan email atau nomor HP.
 
 Data 15 desa (luas, penduduk 2025, jarak ke ibu kota kecamatan) diambil dari BPS Kabupaten Malang, *Kecamatan Pakis Dalam Angka 2026*.
 
@@ -201,3 +201,5 @@ Buku I mengusulkan Lokerin terhubung ke SIAPkerja. Permenaker 17/2024 Pasal 8 me
 3. Buka **Rekap yang disetujui** lalu pilih **Unduh JSON**. Berkas memuat agregat per desa, total Kecamatan Pakis, tanggal rekap dan waktu persetujuan dalam WIB. Identitas warga serta identitas akun penyetuju tersimpan di luar berkas unduhan.
 
 Format JSON tersebut untuk pemeriksaan lokal. Penyampaian ke Command Center Kabupaten Malang masih menunggu spesifikasi penerimaan dan akses uji dari Diskominfo, termasuk definisi indikator dan kode wilayah yang akan dipakai. [Command Center Kabupaten Malang](https://malangkab.go.id/Content/detail/diskominfo-bersinergi-dengan-greenblue-korea-wujudkan-smart-city-kabupaten-malang) · [Forum Satu Data Kabupaten Malang](https://ppid.malangkab.go.id/seputar/berita/forum-satu-data-kabupaten-malang-perkuat-sinergi-pengelolaan-data-dan-sosialisasi-dashboard-epic)
+4. Login sebagai usaha → ubah status Rizky ke wawancara lalu diterima *(menunggu fitur F-09)*.
+5. Login kader/DisNaKer → angka penempatan bertambah.
