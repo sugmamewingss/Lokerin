@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Lowongan;
 use App\Models\Pelatihan;
 use App\Models\ProfilPencari;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -27,28 +28,31 @@ class MatchingService
 
     /**
      * Rekomendasi lowongan untuk satu pencari kerja (F-07).
-     * Mengembalikan koleksi ['lowongan' => Lowongan, 'hasil' => array, 'pelatihan' => Collection], urut skor menurun.
+     * Urut berdasarkan skor atau jarak. Jarak tidak memengaruhi skor yang disimpan saat melamar.
      */
-    public function rekomendasi(ProfilPencari $profil, ?int $ambang = null): Collection
+    public function rekomendasi(ProfilPencari $profil, ?int $ambang = null, bool $terdekat = false): Collection
     {
         $ambang ??= config('lokerin.ambang_rekomendasi');
         $dataProfil = $this->dataProfil($profil);
+        $urutSkor = ['hasil.skor', 'desc'];
+        $urutJarak = fn (array $a, array $b) => ($a['hasil']['jarak_km'] ?? INF) <=> ($b['hasil']['jarak_km'] ?? INF);
 
-        return Lowongan::tampil()
+        $rekomendasi = Lowongan::tampil()
             ->with(['usaha.desa', 'keahlian'])
             ->get()
-            ->map(function (Lowongan $l) use ($dataProfil) {
-                $hasil = $this->skor->hitung($dataProfil, $this->dataLowongan($l));
-
-                return [
-                    'lowongan' => $l,
-                    'hasil' => $hasil,
-                    'pelatihan' => $this->saranPelatihan($hasil['keahlian_kurang']),
-                ];
-            })
+            ->map(fn (Lowongan $l) => ['lowongan' => $l, 'hasil' => $this->skor->hitung($dataProfil, $this->dataLowongan($l))])
             ->filter(fn ($r) => $r['hasil']['skor'] >= $ambang)
-            ->sortByDesc(fn ($r) => $r['hasil']['skor'])
+            ->sortBy($terdekat
+                ? [$urutJarak, $urutSkor, ['lowongan.id', 'asc']]
+                : [$urutSkor, $urutJarak, ['lowongan.id', 'asc']])
             ->values();
+
+        $keahlian = $rekomendasi->pluck('hasil.keahlian_kurang')->flatten()->unique()->all();
+        $pelatihan = $this->saranPelatihan($keahlian)->groupBy('keahlian_id')->all();
+
+        return $rekomendasi->map(fn (array $item) => $item + [
+            'pelatihan' => collect(Arr::only($pelatihan, $item['hasil']['keahlian_kurang']))->collapse(),
+        ]);
     }
 
     /** Saran pelatihan untuk keahlian yang belum dimiliki (F-12). */
@@ -58,18 +62,21 @@ class MatchingService
             return collect();
         }
 
-        return Pelatihan::with('keahlian')->whereIn('keahlian_id', $keahlianIds)->get();
+        return Pelatihan::with('keahlian')->whereIn('keahlian_id', $keahlianIds)->orderBy('judul')->orderBy('id')->get();
     }
 
     private function dataProfil(ProfilPencari $p): array
     {
         $p->loadMissing(['user.desa', 'keahlian']);
+        $desa = $p->user?->desa;
 
         return [
             'jurusan' => $p->jurusan,
             'keahlian_ids' => $p->keahlian->pluck('id')->all(),
-            'desa_id' => $p->user?->desa_id,
-            'kecamatan' => $p->user?->desa?->kecamatan,
+            'desa_id' => $desa?->id,
+            'kecamatan' => $desa?->kecamatan,
+            'lintang' => $desa?->lintang,
+            'bujur' => $desa?->bujur,
             'pendidikan' => $p->pendidikan_terakhir,
         ];
     }
@@ -77,12 +84,15 @@ class MatchingService
     private function dataLowongan(Lowongan $l): array
     {
         $l->loadMissing(['usaha.desa', 'keahlian']);
+        $desa = $l->usaha?->desa;
 
         return [
             'jurusan_target' => $l->jurusan_target,
             'keahlian_wajib_ids' => $l->keahlian->filter(fn ($k) => (bool) $k->pivot->wajib)->pluck('id')->all(),
-            'desa_id' => $l->usaha?->desa_id,
-            'kecamatan' => $l->usaha?->desa?->kecamatan,
+            'desa_id' => $desa?->id,
+            'kecamatan' => $desa?->kecamatan,
+            'lintang' => $desa?->lintang,
+            'bujur' => $desa?->bujur,
             'pendidikan_min' => $l->pendidikan_min,
         ];
     }

@@ -3,32 +3,35 @@
 namespace App\Http\Controllers\Kader;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lamaran;
-use App\Models\Lowongan;
-use App\Models\ProfilPencari;
+use App\Http\Requests\PeriodeDasborRequest;
+use App\Models\Desa;
 use App\Models\Usaha;
+use App\Services\RekapKetenagakerjaan;
 
-/** Dasbor desa (F-11). TODO (Muflih): grafik pencari kerja per jurusan dengan Chart.js. */
 class DasborController extends Controller
 {
-    public function index()
+    public function index(PeriodeDasborRequest $request, RekapKetenagakerjaan $rekap)
     {
-        $desa = auth()->user()->desa;
+        $desa = $request->user()->desa;
         abort_unless($desa, 403, 'Akun kader belum terhubung ke desa.');
 
-        $pencariDesa = ProfilPencari::whereHas('user', fn ($q) => $q->where('desa_id', $desa->id));
-        $lamaranDesa = Lamaran::whereHas('profil.user', fn ($q) => $q->where('desa_id', $desa->id));
+        $ringkasan = $rekap->perDesa(Desa::whereKey($desa->id))->sole();
+        $ujiCoba = $desa->kecamatan === RekapKetenagakerjaan::KECAMATAN && $desa->nama === RekapKetenagakerjaan::DESA_UJI_COBA
+            ? $rekap->ujiCoba($desa, $request->awalUjiCoba())
+            : null;
 
         return view('kader.dasbor', [
             'desa' => $desa,
             'angka' => [
-                'Pencari kerja terdaftar' => (clone $pencariDesa)->whereNotNull('persetujuan_data_at')->count(),
-                'Lowongan aktif di desa' => Lowongan::tampil()->whereHas('usaha', fn ($q) => $q->where('desa_id', $desa->id))->count(),
-                'Lamaran bulan ini' => (clone $lamaranDesa)->where('dikirim_at', '>=', now()->startOfMonth())->count(),
-                'Penempatan' => (clone $lamaranDesa)->where('status', 'diterima')->count(),
+                'Pencari kerja terdaftar' => $ringkasan['pencari'],
+                'Lowongan aktif di desa' => $ringkasan['lowongan'],
+                'Lamaran bulan ini' => $ringkasan['lamaran_bulan_ini'],
+                'Penempatan' => $ringkasan['penempatan'],
             ],
-            'perJurusan' => (clone $pencariDesa)->selectRaw('jurusan, count(*) as jumlah')->groupBy('jurusan')->orderByDesc('jumlah')->get(),
+            'perJurusan' => $desa->profilPencari()->disetujui()->selectRaw('jurusan, COUNT(*) as jumlah')
+                ->groupBy('jurusan', 'users.desa_id')->orderByDesc('jumlah')->orderBy('jurusan')->get(),
             'menunggu' => Usaha::where('desa_id', $desa->id)->where('status_verifikasi', 'menunggu')->count(),
+            'ujiCoba' => $ujiCoba,
         ]);
     }
 }

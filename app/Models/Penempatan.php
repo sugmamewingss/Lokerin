@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Penempatan extends Model
 {
+    public const JENIS_KONTRAK = [
+        'tetap' => 'Tetap',
+        'kontrak' => 'Kontrak',
+        'paruh_waktu' => 'Paruh waktu',
+        'harian' => 'Harian',
+    ];
+
     protected $table = 'penempatan';
 
     protected $fillable = ['lamaran_id', 'tanggal_mulai', 'jenis_kontrak', 'terdaftar_bpjs'];

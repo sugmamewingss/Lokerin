@@ -17,9 +17,9 @@ class SkorKecocokan
     }
 
     /**
-     * @param array{jurusan:?string, keahlian_ids:int[], desa_id:?int, kecamatan:?string, pendidikan:?string} $profil
-     * @param array{jurusan_target:?string, keahlian_wajib_ids:int[], desa_id:?int, kecamatan:?string, pendidikan_min:?string} $lowongan
-     * @return array{skor:int, J:float, K:float, D:float, E:float, keahlian_kurang:int[]}
+     * @param array{jurusan:?string, keahlian_ids:int[], desa_id:?int, kecamatan:?string, pendidikan:?string, lintang?:?float, bujur?:?float} $profil
+     * @param array{jurusan_target:?string, keahlian_wajib_ids:int[], desa_id:?int, kecamatan:?string, pendidikan_min:?string, lintang?:?float, bujur?:?float} $lowongan
+     * @return array{skor:int, J:float, K:float, D:float, E:float, keahlian_kurang:int[], jumlah_keahlian_wajib:int, kategori_lokasi:?string, jarak_km:?float}
      */
     public function hitung(array $profil, array $lowongan): array
     {
@@ -31,12 +31,18 @@ class SkorKecocokan
         $K = count($wajib) === 0 ? 1.0 : (count($wajib) - count($kurang)) / count($wajib);
 
         $D = $this->nilaiLokasi($profil, $lowongan);
+        $lokasi = $this->kategoriLokasi($profil, $lowongan);
         $E = $this->nilaiPendidikan($profil['pendidikan'] ?? null, $lowongan['pendidikan_min'] ?? null);
 
         $b = $this->config['bobot'];
         $skor = (int) round($b['jurusan'] * $J + $b['keahlian'] * $K + $b['lokasi'] * $D + $b['pendidikan'] * $E);
 
-        return ['skor' => $skor, 'J' => $J, 'K' => round($K, 2), 'D' => $D, 'E' => $E, 'keahlian_kurang' => $kurang];
+        return [
+            'skor' => $skor, 'J' => $J, 'K' => round($K, 2), 'D' => $D, 'E' => $E,
+            'keahlian_kurang' => $kurang, 'jumlah_keahlian_wajib' => count($wajib),
+            'kategori_lokasi' => $lokasi,
+            'jarak_km' => $lokasi === 'desa_sama' ? 0.0 : $this->jarakKm($profil, $lowongan),
+        ];
     }
 
     public function nilaiJurusan(?string $jurusanProfil, ?string $jurusanTarget): float
@@ -57,15 +63,35 @@ class SkorKecocokan
 
     public function nilaiLokasi(array $profil, array $lowongan): float
     {
-        $l = $this->config['lokasi'];
+        return $this->config['lokasi'][$this->kategoriLokasi($profil, $lowongan) ?? 'luar'];
+    }
+
+    private function kategoriLokasi(array $profil, array $lowongan): ?string
+    {
         if (!empty($profil['desa_id']) && ($profil['desa_id'] ?? null) === ($lowongan['desa_id'] ?? null)) {
-            return $l['desa_sama'];
-        }
-        if (!empty($profil['kecamatan']) && strcasecmp($profil['kecamatan'], $lowongan['kecamatan'] ?? '') === 0) {
-            return $l['kecamatan_sama'];
+            return 'desa_sama';
         }
 
-        return $l['luar'];
+        if (empty($profil['kecamatan']) || empty($lowongan['kecamatan'])) {
+            return null;
+        }
+
+        return strcasecmp($profil['kecamatan'], $lowongan['kecamatan']) === 0 ? 'kecamatan_sama' : 'luar';
+    }
+
+    private function jarakKm(array $asal, array $tujuan): ?float
+    {
+        if (!isset($asal['lintang'], $asal['bujur'], $tujuan['lintang'], $tujuan['bujur'])) {
+            return null;
+        }
+
+        $lintangAsal = deg2rad($asal['lintang']);
+        $lintangTujuan = deg2rad($tujuan['lintang']);
+        $selisihBujur = deg2rad($tujuan['bujur'] - $asal['bujur']);
+        $haversine = sin(($lintangTujuan - $lintangAsal) / 2) ** 2
+            + cos($lintangAsal) * cos($lintangTujuan) * sin($selisihBujur / 2) ** 2;
+
+        return 2 * 6371 * asin(sqrt(min(1, $haversine)));
     }
 
     public function nilaiPendidikan(?string $pendidikanProfil, ?string $pendidikanMin): float

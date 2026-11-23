@@ -33,7 +33,7 @@ class RegisterController extends Controller
         ]);
 
         // Kolom email bawaan Laravel wajib unik dan tidak boleh kosong, jadi dibuat placeholder dari no HP.
-        $data['email'] ??= preg_replace('/\D/', '', $data['no_hp']).'@hp.lokerin.local';
+        $data['email'] ??= User::emailUntukNomorHp($data['no_hp']);
 
         $user = User::create($data);
 

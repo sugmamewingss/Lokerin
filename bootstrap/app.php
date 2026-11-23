@@ -18,5 +18,5 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo('/beranda');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->dontFlash(['kode_aktivasi', 'nomor_warga_ak1']);
     })->create();

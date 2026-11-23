@@ -24,7 +24,7 @@ class LoginController extends Controller
 
         $kolom = filter_var($data['identitas'], FILTER_VALIDATE_EMAIL) ? 'email' : 'no_hp';
 
-        if (!Auth::attempt([$kolom => $data['identitas'], 'password' => $data['password']], $request->boolean('ingat'))) {
+        if (!Auth::attempt([$kolom => $data['identitas'], 'password' => $data['password'], 'menunggu_aktivasi' => false], $request->boolean('ingat'))) {
             throw ValidationException::withMessages(['identitas' => 'Email/nomor HP atau kata sandi salah.']);
         }
 
