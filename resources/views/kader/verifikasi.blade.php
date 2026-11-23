@@ -7,12 +7,14 @@
             <div>
                 <p class="font-semibold">{{ $u->nama_usaha }}</p>
                 <p class="text-sm text-slate-500">{{ $u->jenis_usaha }} · {{ $u->alamat }} · pemilik {{ $u->user->name }}</p>
+                <p class="text-sm text-slate-600">{{ $u->is_umkm === null ? 'Skala usaha belum ditentukan' : ($u->is_umkm ? 'UMKM' : 'Perusahaan non-UMKM') }}</p>
             </div>
             @if ($u->status_verifikasi === 'menunggu')
                 <div class="flex gap-2">
                     @foreach (['terverifikasi' => 'bg-blue-600 text-white', 'ditolak' => 'border text-red-600'] as $s => $kelas)
                         <form method="POST" action="{{ route('kader.verifikasi.update', $u) }}">@csrf
                             <input type="hidden" name="status" value="{{ $s }}">
+                            <input type="hidden" name="versi_profil" value="{{ $u->versiVerifikasi() }}">
                             <button class="px-3 py-1.5 rounded-lg text-sm {{ $kelas }}">{{ $s === 'terverifikasi' ? 'Verifikasi' : 'Tolak' }}</button>
                         </form>
                     @endforeach

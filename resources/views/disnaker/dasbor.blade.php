@@ -1,21 +1,16 @@
 @extends('layouts.app', ['judul' => 'Dasbor kecamatan'])
 @section('konten')
-<h1 class="text-xl font-bold mb-4">Dasbor Kecamatan Pakis</h1>
-<div class="overflow-x-auto">
-<table class="w-full bg-white rounded-xl border text-sm">
-    <thead class="bg-slate-100"><tr>
-        <th class="p-2 text-left">Desa</th><th class="p-2 text-right">Pencari kerja</th><th class="p-2 text-right">Lowongan aktif</th><th class="p-2 text-right">Lamaran</th><th class="p-2 text-right">Penempatan</th>
-    </tr></thead>
-    <tbody>
-    @foreach ($rekap as $r)
-        <tr class="border-t"><td class="p-2">{{ $r['desa'] }}</td><td class="p-2 text-right">{{ $r['pencari'] }}</td><td class="p-2 text-right">{{ $r['lowongan'] }}</td><td class="p-2 text-right">{{ $r['lamaran'] }}</td><td class="p-2 text-right">{{ $r['penempatan'] }}</td></tr>
-    @endforeach
-    </tbody>
-    <tfoot class="font-semibold border-t"><tr>
-        <td class="p-2">Total</td>
-        @foreach (['pencari', 'lowongan', 'lamaran', 'penempatan'] as $k)<td class="p-2 text-right">{{ $rekap->sum($k) }}</td>@endforeach
-    </tr></tfoot>
-</table>
+<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-xl font-bold">Dasbor Kecamatan Pakis</h1>
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ route('disnaker.siapkerja.index') }}" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700">Persiapan integrasi SIAPkerja</a>
+        <a href="{{ route('disnaker.command-center.index') }}" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700">Rekap Command Center</a>
+    </div>
 </div>
-<p class="mt-2 text-xs text-slate-400">TODO (Muflih): grafik dan ekspor CSV.</p>
+@if ($ujiCoba)
+    @include('partials.indikator-mangliawan', ['ujiCoba' => $ujiCoba])
+@endif
+<h2 class="mb-3 text-lg font-semibold">Rekap per desa</h2>
+<p class="mb-3 text-sm text-slate-600">Lowongan aktif mengikuti kuota tersisa. Lamaran dan penempatan dikelompokkan menurut desa pencari kerja dengan persetujuan aktif.</p>
+@include('disnaker.partials.tabel-rekap-desa')
 @endsection

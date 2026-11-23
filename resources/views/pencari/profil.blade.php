@@ -18,7 +18,8 @@
             </select>
         </label>
         <label>Pendidikan terakhir
-            <select name="pendidikan_terakhir" class="mt-1 w-full rounded-lg border-slate-300">
+            <select name="pendidikan_terakhir" required class="mt-1 w-full rounded-lg border-slate-300">
+                <option value="">Pilih pendidikan</option>
                 @foreach (array_keys(config('lokerin.level_pendidikan')) as $p)<option @selected(old('pendidikan_terakhir', $profil->pendidikan_terakhir) === $p)>{{ $p }}</option>@endforeach
             </select>
         </label>
@@ -52,10 +53,28 @@
         @endforeach
     </div>
 
-    <label class="flex items-start gap-2 text-sm p-3 rounded-lg bg-slate-50 border">
-        <input type="checkbox" name="setuju" value="1" class="mt-1" @checked($profil->isAktif())>
-        <span>Saya setuju data profil ini dipakai untuk mencocokkan lowongan dan rekap statistik desa. Nomor HP saya hanya dibagikan ke usaha yang mengundang saya wawancara. Lokerin tidak meminta NIK atau foto KTP.</span>
-    </label>
+    @unless ($profil->isAktif())
+        <div class="rounded-lg border bg-slate-50 p-3 text-sm">
+            <p class="mb-2">Data profil dipakai untuk rekomendasi lowongan, proses lamaran, dan rekap statistik desa. Usaha tempat kamu melamar bisa melihat nomor HP mulai tahap wawancara. Baca <a href="{{ route('privasi') }}" class="font-medium text-blue-700 underline">kebijakan data Lokerin</a>.</p>
+            <label class="flex items-start gap-2">
+                <input type="checkbox" name="setuju" value="1" required class="mt-1" @checked(old('setuju'))>
+                <span>Saya setuju data profil saya digunakan untuk keperluan tersebut.</span>
+            </label>
+        </div>
+    @endunless
     <button class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold">Simpan profil</button>
 </form>
+
+@if ($profil->isAktif())
+    <section class="mt-4 max-w-2xl rounded-xl border border-slate-200 bg-white p-5 text-sm">
+        <h2 class="font-semibold">Persetujuan data aktif</h2>
+        <p class="mt-1 text-slate-600">Dicatat pada {{ $profil->persetujuan_data_at->format('d/m/Y') }}. Baca <a href="{{ route('privasi') }}" class="text-blue-700 underline">kebijakan data Lokerin</a>.</p>
+        <p class="mt-2 text-slate-600">Menarik persetujuan menonaktifkan rekomendasi dan pengiriman lamaran baru. Riwayat lamaran tetap bisa kamu lihat.</p>
+        <form method="POST" action="{{ route('pencari.persetujuan.tarik') }}" class="mt-3">
+            @csrf
+            @method('DELETE')
+            <button class="rounded-lg border border-slate-300 px-3 py-2 font-medium text-red-700">Tarik persetujuan</button>
+        </form>
+    </section>
+@endif
 @endsection

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Desa;
 use App\Models\Lowongan;
+use App\Models\User;
+use App\Services\MatchingService;
 use Illuminate\Http\Request;
 
 class PublikController extends Controller
@@ -28,19 +30,18 @@ class PublikController extends Controller
         return view('publik.lowongan', ['lowongan' => $lowongan, 'desa' => Desa::orderBy('nama')->get()]);
     }
 
-    public function detail(Lowongan $lowongan)
+    public function detail(Lowongan $lowongan, MatchingService $matching)
     {
         abort_unless(Lowongan::tampil()->whereKey($lowongan->id)->exists(), 404);
         $lowongan->load(['usaha.desa', 'keahlian']);
 
         $hasil = null;
-        $pelatihan = collect();
-        $profil = auth()->user()?->profilPencari;
+        $user = auth()->user();
+        $profil = $user?->hasRole(User::ROLE_PENCARI) ? $user->profilPencari()->first() : null;
         if ($profil && $profil->isAktif()) {
-            $matching = app(\App\Services\MatchingService::class);
             $hasil = $matching->hitung($profil, $lowongan);
-            $pelatihan = $matching->saranPelatihan($hasil['keahlian_kurang']);
         }
+        $pelatihan = $matching->saranPelatihan($hasil['keahlian_kurang'] ?? $lowongan->keahlianWajib()->pluck('keahlian.id')->all());
 
         return view('publik.detail', compact('lowongan', 'hasil', 'pelatihan', 'profil'));
     }

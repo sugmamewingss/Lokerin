@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+    .cetak-daftar-lowongan {
+        background: white;
+        color: black;
+    }
+
+    .cetak-daftar-lowongan > header,
+    .cetak-daftar-lowongan > footer,
+    .cetak-daftar-lowongan [data-pesan-lokerin] {
+        display: none;
+    }
+
+    .cetak-daftar-lowongan > main {
+        max-width: none;
+        padding: 0;
+    }
+
+    .cetak-daftar-lowongan .baris-lowongan,
+    .cetak-daftar-lowongan .teks-katalog {
+        break-inside: avoid;
+    }
+
+    .cetak-daftar-lowongan a {
+        color: black;
+    }
+}

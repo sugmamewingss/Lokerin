@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -26,6 +27,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'menunggu_aktivasi' => 'boolean',
         ];
     }
 
@@ -47,6 +49,16 @@ class User extends Authenticatable
     public function hasRole(string ...$roles): bool
     {
         return in_array($this->role, $roles, true);
+    }
+
+    public function scopeMenungguAktivasiWarga(Builder $query): Builder
+    {
+        return $query->where('role', self::ROLE_PENCARI)->where('menunggu_aktivasi', true);
+    }
+
+    public static function emailUntukNomorHp(string $nomor): string
+    {
+        return preg_replace('/\D/', '', $nomor).'@hp.lokerin.local';
     }
 
     /** Halaman awal setelah login, sesuai peran. */

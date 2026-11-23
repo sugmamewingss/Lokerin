@@ -41,7 +41,9 @@ class AlurDemoTest extends TestCase
         $kader = User::where('email', 'kader.mangliawan@lokerin.test')->first();
         $usaha = Usaha::where('nama_usaha', 'Kedai Sumber Rasa')->first();
 
-        $this->actingAs($kader)->post(route('kader.verifikasi.update', $usaha), ['status' => 'terverifikasi'])->assertRedirect();
+        $this->actingAs($kader)->post(route('kader.verifikasi.update', $usaha), [
+            'status' => 'terverifikasi', 'versi_profil' => $usaha->versiVerifikasi(),
+        ])->assertRedirect();
         $this->assertSame('terverifikasi', $usaha->fresh()->status_verifikasi);
     }
 

@@ -14,6 +14,8 @@ class DesaSeeder extends Seeder
 {
     public function run(): void
     {
+        $titik = require database_path('data/titik-desa-pakis-2026.php');
+
         $data = [
             // nama, luas km2, penduduk 2025, jarak ke ibu kota kecamatan (km)
             ['Sekarpuro', 1.96, 12129, 5],
@@ -34,12 +36,18 @@ class DesaSeeder extends Seeder
         ];
 
         foreach ($data as [$nama, $luas, $penduduk, $jarak]) {
+            [$lintang, $bujur] = $titik['Pakis'][$nama];
             Desa::updateOrCreate(['nama' => $nama, 'kecamatan' => 'Pakis'], [
                 'luas_km2' => $luas, 'penduduk' => $penduduk, 'jarak_ke_kecamatan_km' => $jarak,
+                'lintang' => $lintang, 'bujur' => $bujur,
             ]);
         }
 
         // Satu wilayah di luar Pakis untuk contoh lowongan luar kecamatan (komponen D = 0,2).
-        Desa::updateOrCreate(['nama' => 'Sawojajar (Kota Malang)', 'kecamatan' => 'Kedungkandang']);
+        $nama = 'Sawojajar (Kota Malang)';
+        [$lintang, $bujur] = $titik['Kedungkandang'][$nama];
+        Desa::updateOrCreate(['nama' => $nama, 'kecamatan' => 'Kedungkandang'], [
+            'lintang' => $lintang, 'bujur' => $bujur,
+        ]);
     }
 }
